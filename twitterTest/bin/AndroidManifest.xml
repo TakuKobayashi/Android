@@ -7,9 +7,7 @@
 		android:minSdkVersion="8"
 		android:targetSdkVersion="15" />
 
-	<!-- Facebook等への投稿のためにインターネットに接続するパーミッションが必要 -->
 	<uses-permission android:name="android.permission.INTERNET"/>
-	<!-- ネットワーク接続しているかどうかの判別を行うために必要 -->
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
 	<application

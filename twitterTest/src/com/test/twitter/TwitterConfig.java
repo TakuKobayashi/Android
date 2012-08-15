@@ -1,3 +1,5 @@
+//  Created by Taku Kobayashi 小林 拓
+
 package com.test.twitter;
 
 public class TwitterConfig{

@@ -1,3 +1,5 @@
+//  Created by Taku Kobayashi 小林 拓
+
 package com.test.twitter;
 
 import java.io.File;
@@ -14,8 +16,10 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager.LayoutParams;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -36,6 +40,8 @@ public class TwitterTestActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_twitter_test);
+		//起動時にはキーボードを表示させないようにする
+		getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
 		//Twitterとの認証ページを表示させるためのWebView
 		m_WebView = (WebView) findViewById(R.id.TwitterWebView);
@@ -121,6 +127,20 @@ public class TwitterTestActivity extends Activity {
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	private WebViewClient m_WebViewClient = new WebViewClient(){
+
+		//※Android2.*系でも常時呼ばれる
+		@Override
+		public void onPageStarted(WebView view, String url, Bitmap favicon) {
+			if ((url != null) && (url.startsWith(TwitterConfig.CallbackUrl))) {
+				m_WebView.stopLoading();
+				m_WebView.setVisibility(View.INVISIBLE);
+				//認証完了後にCallbackするURLをフックし、AccessTokenを取得する処理を行う
+				m_TwitterOAuth.returnOAuth(url);
+			}
+		};
+
+		/*
+		//※Android2.*系ではフックできない可能性がある
 		//返り値をtrueにするとURLを読み込む前にフックして処理を行う
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -133,6 +153,7 @@ public class TwitterTestActivity extends Activity {
 			}
 			return result;
 		}
+		*/
 	};
 
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -180,6 +201,8 @@ public class TwitterTestActivity extends Activity {
 			if(url != null){
 				m_WebView.loadUrl(url);
 				m_WebView.setVisibility(View.VISIBLE);
+				//WebView上で入力時にキーボードを出現させるためにフォーカスをあてる。
+				m_WebView.requestFocus();
 			}
 		}
 
